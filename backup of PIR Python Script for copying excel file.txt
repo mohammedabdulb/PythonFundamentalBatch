@@ -1,0 +1,51 @@
+import openpyxl as xl;
+# opening the source excel file
+EINA_file ="C:\\Users\\mohd.abdul.basith.DIR\\OneDrive - Accenture\\Desktop\\checking PIR Data\\Copy EINA.xlsx"
+wb2_eina = xl.load_workbook(EINA_file)
+ws2_eina = wb2_eina.worksheets[0]
+EINE_file ="C:\\Users\\mohd.abdul.basith.DIR\\OneDrive - Accenture\\Desktop\\checking PIR Data\\Copy EINE.xlsx"
+wb1_eine = xl.load_workbook(EINE_file)
+ws1_eine = wb1_eine.worksheets[0]# opening the destination excel file 
+Temp_PIR = "C:\\Users\\mohd.abdul.basith.DIR\\OneDrive - Accenture\\Desktop\\checking PIR Data\\Template for Data Loading PIR 01.xlsx"
+#opening SFDC workbook and copying
+sfdc_pir="C:\\Users\\mohd.abdul.basith.DIR\\OneDrive - Accenture\\Desktop\\checking PIR Data\\Copy SFDC PIR.xlsx"
+sfdc_pir_wbook = xl.load_workbook(sfdc_pir)
+sfdc_pir_wsheet = sfdc_pir_wbook.worksheets[0]
+
+PIR_template_wb3 = xl.load_workbook(Temp_PIR)
+sheets = PIR_template_wb3.sheetnames
+pasting_sheet_eine_ws2 = PIR_template_wb3[sheets[2]]
+pasting_sheet_eina_ws3 = PIR_template_wb3[sheets[3]]
+pasting_sheet_sfdc_ws1 = PIR_template_wb3[sheets[1]]
+#ws4 = wb3.active
+#wb2.worksheets[0].range('A1:A6').copy(wb3.sheets['Sheet3'].range('A1:A6'))
+#ws = wb['%s' % (ws_name_wanted)]
+def test(copying_sheet,saving_sheet):
+    for count,row in enumerate(copying_sheet.iter_rows()):
+        #print(row)
+        if (copying_sheet == ws1_eine) or (copying_sheet ==sfdc_pir_wsheet) and count > 0 :
+            for cell in row:
+                cell_value = cell.value
+                print('going here')
+                #print(cell_value)
+                new_col_loc = (chr(int(ord(cell.coordinate[0:1])) + 1))
+                new_row_loc = cell.coordinate[1:]
+                #print(new_col_loc,new_row_loc)
+                #print(f"what is this {ws3['%s%d' % (new_col_loc ,int(new_row_loc))] }")
+                saving_sheet['%s%d' % (new_col_loc ,int(new_row_loc))] = cell_value
+                #ws4['%s' % (cell.coordinate)] = ' '
+        elif count > 0:
+            for cell in row:
+                print('not going here')
+                cell_value = cell.value
+                #print(cell_value)
+                new_col_loc = (chr(int(ord(cell.coordinate[0:1]))))
+                new_row_loc = cell.coordinate[1:]
+                #print(new_col_loc,new_row_loc)
+                #print(f"what is this {ws3['%s%d' % (new_col_loc ,int(new_row_loc))] }")
+                saving_sheet['%s%d' % (new_col_loc ,int(new_row_loc))] = cell_value
+                #ws4['%s' % (cell.coordinate)] = ' '
+    PIR_template_wb3.save(str(Temp_PIR))
+test(ws1_eine,pasting_sheet_eine_ws2)
+test(ws2_eina,pasting_sheet_eina_ws3)
+test(sfdc_pir_wsheet,pasting_sheet_sfdc_ws1)
